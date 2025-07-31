@@ -104,6 +104,15 @@
             </div>
         </section>
         
+        <!-- NEW: Compositional Comparison Section -->
+        <section class="bg-white p-8 rounded-xl shadow-lg mb-16">
+            <h3 class="text-3xl font-bold text-center mb-8">Compositional Comparison</h3>
+            <p class="text-center text-gray-600 max-w-2xl mx-auto mb-6">Proverde consistently shows higher concentrations of key active ingredients, MOS and Beta-glucan, when compared to other products in the market.</p>
+            <div class="bg-gray-100 p-4 rounded-lg h-96">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </section>
+
         <!-- Product Composition -->
         <section class="bg-white p-8 rounded-xl shadow-lg mb-16">
             <h3 class="text-3xl font-bold text-center mb-8">Product Composition & Details</h3>
@@ -268,6 +277,54 @@
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // --- Chart 3: Compositional Comparison ---
+            const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+            const comparisonChart = new Chart(comparisonCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Proverde', 'Lactamuun', 'Provilli', 'Celmanax', 'Biomos'],
+                    datasets: [{
+                        label: 'MOS %',
+                        data: [16.2, 13.5, 9.6, 9.6, 6.2],
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Beta Glucan %',
+                        data: [17.5, 14.6, 14.4, 8.5, 11.7],
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
                         },
                         tooltip: {
                             callbacks: {
