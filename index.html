@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proverde - Natural Animal Health Solutions</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -88,18 +89,7 @@
                     <h4 class="text-xl font-semibold mb-4">Binding Effectiveness Against Pathogens</h4>
                     <p class="text-gray-600 mb-4">Proverde has been proven to bind <strong>95% to 100%</strong> of various strains of E. coli and Salmonella, effectively reducing the risk of enteric infections.</p>
                     <div class="bg-gray-100 p-4 rounded-lg">
-                        <!-- Simplified Chart Representation -->
-                        <div class="flex justify-around items-end h-48">
-                            <div class="text-center">
-                                <div class="bg-green-500 rounded-t-lg" style="height: 90%; width: 50px;"></div>
-                                <p class="mt-2 font-semibold">Salmonella</p>
-                            </div>
-                            <div class="text-center">
-                                <div class="bg-green-500 rounded-t-lg" style="height: 98%; width: 50px;"></div>
-                                <p class="mt-2 font-semibold">E. coli</p>
-                            </div>
-                        </div>
-                        <p class="text-center text-sm text-gray-500 mt-2">Figure 1: % of Species Agglutinated</p>
+                        <canvas id="pathogenChart"></canvas>
                     </div>
                 </div>
 
@@ -108,22 +98,7 @@
                     <h4 class="text-xl font-semibold mb-4">Inhibition of Cryptosporidium parvum</h4>
                     <p class="text-gray-600 mb-4">In-vitro research shows Proverde effectively inhibits the binding of <em>C. parvum</em> sporozoites, a common cause of diarrhea in calves. At a concentration of 60 mg/mL, it achieved <strong>72.47% binding inhibition</strong>.</p>
                      <div class="bg-gray-100 p-4 rounded-lg">
-                        <!-- Simplified Chart Representation -->
-                        <div class="flex justify-around items-end h-48">
-                            <div class="text-center">
-                                <div class="bg-gray-300 rounded-t-lg" style="height: 0%; width: 30px;"></div>
-                                <p class="text-xs">20 mg/mL</p>
-                            </div>
-                            <div class="text-center">
-                                <div class="bg-green-400 rounded-t-lg" style="height: 58.62%; width: 30px;"></div>
-                                <p class="text-xs">40 mg/mL</p>
-                            </div>
-                             <div class="text-center">
-                                <div class="bg-green-600 rounded-t-lg" style="height: 72.47%; width: 30px;"></div>
-                                <p class="text-xs">60 mg/mL</p>
-                            </div>
-                        </div>
-                        <p class="text-center text-sm text-gray-500 mt-2">Figure 2: Proverde Binding Inhibition of C. parvum</p>
+                        <canvas id="cryptoChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -160,7 +135,7 @@
             </div>
         </section>
 
-        <!-- NEW: Feeding Rates Section -->
+        <!-- Feeding Rates Section -->
         <section class="bg-white p-8 rounded-xl shadow-lg mb-16">
             <h3 class="text-3xl font-bold text-center mb-8">Recommended Feeding Rates for Dairy Cattle</h3>
             <div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
@@ -200,6 +175,112 @@
             <p class="text-sm text-gray-400 mt-2">Proverde is a registered trademark of Natural Biologics, Inc. Newfield, NY USA.</p>
         </div>
     </footer>
+
+    <script>
+        // Wait for the DOM to be fully loaded before initializing the charts
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Chart 1: Pathogen Binding Effectiveness ---
+            const pathogenCtx = document.getElementById('pathogenChart').getContext('2d');
+            const pathogenChart = new Chart(pathogenCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Salmonella Species', 'E. coli Species'],
+                    datasets: [{
+                        label: '% of Species Agglutinated',
+                        data: [90, 98], // Data based on visual representation in the provided PDF
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(54, 162, 235, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(54, 162, 235, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // --- Chart 2: Cryptosporidium parvum Inhibition ---
+            const cryptoCtx = document.getElementById('cryptoChart').getContext('2d');
+            const cryptoChart = new Chart(cryptoCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['20 mg/mL', '40 mg/mL', '60 mg/mL'],
+                    datasets: [{
+                        label: 'Binding Inhibition',
+                        data: [0.00, 58.62, 72.47], // Data from the research bulletin
+                        backgroundColor: [
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                            'rgba(255, 99, 132, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                             ticks: {
+                                callback: function(value) {
+                                    return value + '%'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
